@@ -45,6 +45,17 @@ services:
       retries: 20
     restart: unless-stopped
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel --url http://api:8001
+    depends_on:
+      - api
+    networks:
+      - appnet
+    restart: unless-stopped
+
+
 networks:
   appnet:
 

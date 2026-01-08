@@ -3,7 +3,7 @@ import uuid
 import requests
 import streamlit as st
 
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8001")
+API_BASE_URL = os.getenv("API_BASE_URL", "https://porcelain-work-differently-trained.trycloudflare.com")
 
 st.set_page_config(page_title="Sinterklaas Chat", page_icon="🎁")
 
