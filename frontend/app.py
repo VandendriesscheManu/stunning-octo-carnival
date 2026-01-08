@@ -5,7 +5,7 @@ import streamlit as st
 
 API_BASE_URL = os.getenv(
     "API_BASE_URL",
-    "https://porcelain-work-differently-trained.trycloudflare.com",
+    "https://ongoing-sql-nerve-learners.trycloudflare.com ",
 )
 
 # Lees API key uit env (Streamlit Cloud Secrets)
