@@ -3,7 +3,13 @@ import uuid
 import requests
 import streamlit as st
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://porcelain-work-differently-trained.trycloudflare.com")
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
+    "https://porcelain-work-differently-trained.trycloudflare.com",
+)
+
+# Lees API key uit env (Streamlit Cloud Secrets)
+API_KEY = os.getenv("API_KEY", "")
 
 st.set_page_config(page_title="Sinterklaas Chat", page_icon="🎁")
 
@@ -20,6 +26,10 @@ with st.sidebar:
     st.subheader("Instellingen")
     st.write("API:", API_BASE_URL)
     st.write("Session:", st.session_state.session_id)
+
+    # Toon niet de volledige key in UI
+    st.write("API key:", "✅ ingesteld" if API_KEY else "⚠️ niet ingesteld")
+
     if st.button("Nieuwe chat"):
         st.session_state.session_id = str(uuid.uuid4())
         st.session_state.messages = []
@@ -38,13 +48,27 @@ if prompt:
         st.write(prompt)
 
     try:
+        headers = {}
+        if API_KEY:
+            headers["X-API-KEY"] = API_KEY
+
         r = requests.post(
             f"{API_BASE_URL}/chat",
             json={"session_id": st.session_state.session_id, "user_message": prompt},
+            headers=headers,
             timeout=60,
         )
+
+        # Specifieke error handling voor auth
+        if r.status_code == 401:
+            raise Exception("Unauthorized (401) — controleer API_KEY in Streamlit Secrets en in je .env op de server.")
+
         r.raise_for_status()
-        assistant = r.json()["assistant_message"]
+        assistant = r.json().get("assistant_message", "")
+
+        if not assistant:
+            assistant = "Ik kreeg een leeg antwoord terug van de API."
+
     except Exception as e:
         assistant = f"Er ging iets mis met de API: {e}"
 
