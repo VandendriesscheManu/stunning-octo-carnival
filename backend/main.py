@@ -2,9 +2,9 @@ import os
 from fastapi import FastAPI, HTTPException, Header, Depends
 from pydantic import BaseModel
 from core.db import init_db, save_message, get_history
-from core.agents import run_sinterklaas_agent
+from core.agents import run_marketing_plan_agent
 
-app = FastAPI(title="Sinterklaas Chat API", version="0.1.0")
+app = FastAPI(title="Marketing Plan Generator API", version="0.1.0")
 
 API_KEY = os.getenv("API_KEY")
 if not API_KEY:
@@ -48,7 +48,7 @@ def chat(req: ChatRequest, _: None = Depends(require_api_key)):
 
         save_message(req.session_id, role="user", content=req.user_message)
 
-        assistant = run_sinterklaas_agent(
+        assistant = run_marketing_plan_agent(
             user_message=req.user_message,
             history=history_msgs,
         )
